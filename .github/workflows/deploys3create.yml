@@ -21,6 +21,24 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - name: Initialize Terraform
+        uses: terraform Init
+        working-directory: terraform
+
+      - name: Terraform plan
+        env:
+          BUCKET_NAME: ${{ secrets.BUCKET_NAME}}
+        run: |
+          terraform plan \
+          -var="bucket_name=$BUCKET_NAME"
+        working-directory: terraform
+
+      - name: Terraform apply
+        env:
+          TF_VAR_bucket_name: ${{ secrets.BUCKET_NAME}}
+        run: terraform apply --auto-approve
+        working-directory: terraform  
+
       - name: List s3 Buckets
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
